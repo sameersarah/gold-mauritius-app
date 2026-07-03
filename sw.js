@@ -1,4 +1,4 @@
-const CACHE = "gold-mu-v1";
+const CACHE = "gold-mu-v2";
 const ASSETS = ["./index.html", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -20,7 +20,16 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(fetch(e.request).catch(() => new Response("{}", { headers: { "Content-Type": "application/json" } })));
     return;
   }
+  // Network-first for the app shell (HTML/manifest/icons) so content updates
+  // — branding, commentary, prices — show up immediately when online.
+  // Falls back to the last cached copy only when offline.
   e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request))
+    fetch(e.request)
+      .then((res) => {
+        const resClone = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, resClone));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
