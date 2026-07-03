@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>Gold Price Mauritius</title>
+<meta name="theme-color" content="#0d0d0d" />
+<meta name="description" content="Live gold price forecast converted to Mauritian Rupees, calibrated to local retail rates." />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Gold MU" />
+<style>
+  :root{
+    --bg:#0d0d0d; --card:#171512; --card2:#1d1a15;
+    --gold:#d4af37; --gold-light:#f5d576; --gold-dim:#8a6d1f;
+    --text:#f2ede1; --text-dim:#a89f8c; --line:#2a2620;
+    --green:#3ecf6a; --red:#e0554f; --amber:#e0b23f;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  body{padding-bottom:env(safe-area-inset-bottom); padding-top:env(safe-area-inset-top);}
+  .wrap{max-width:520px;margin:0 auto;padding:20px 16px 40px;}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  header h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:8px;}
+  header h1 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;}
+  header h1 .dot.stale{background:var(--amber);}
+  #refreshBtn{background:var(--card);border:1px solid var(--line);color:var(--gold-light);
+    border-radius:10px;padding:8px 10px;font-size:13px;display:flex;align-items:center;gap:6px;}
+  #refreshBtn:active{transform:scale(.96);}
+  .updated{font-size:11px;color:var(--text-dim);margin-bottom:14px;}
+  .hero{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);
+    border-radius:18px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;}
+  .hero:before{content:"";position:absolute;top:-40%;right:-20%;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(212,175,55,.16),transparent 70%);}
+  .hero .label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+  .hero .price{font-size:34px;font-weight:800;color:var(--gold-light);letter-spacing:-.01em;}
+  .hero .price small{font-size:16px;font-weight:600;color:var(--text-dim);margin-left:6px;}
+  .hero .sub{font-size:13px;color:var(--text-dim);margin-top:6px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .card .k{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+  .card .v{font-size:18px;font-weight:700;}
+  .card .chg{font-size:12px;margin-top:4px;font-weight:600;}
+  .up{color:var(--green);} .down{color:var(--red);} .flat{color:var(--text-dim);}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;
+    font-size:12px;font-weight:700;letter-spacing:.02em;}
+  .badge.bullish{background:rgba(62,207,106,.12);color:var(--green);}
+  .badge.bearish{background:rgba(224,85,79,.12);color:var(--red);}
+  .badge.neutral{background:rgba(224,178,63,.12);color:var(--amber);}
+  section{margin-bottom:16px;}
+  section h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);
+    margin:0 0 8px 2px;font-weight:700;}
+  .notes{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .notes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.55;}
+  .notes li{margin-bottom:9px;color:var(--text);}
+  .notes li:last-child{margin-bottom:0;}
+  .notes li strong{color:var(--gold-light);}
+  .watch{font-size:13px;color:var(--text-dim);line-height:1.55;}
+  .levels{display:flex;gap:10px;}
+  .levels .card{flex:1;text-align:center;}
+  .settings{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .settings label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
+  .settings input[type=range]{width:100%;accent-color:var(--gold);}
+  .settings .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:4px;}
+  .settings .val{color:var(--gold-light);font-weight:700;}
+  .settings p{font-size:11.5px;color:var(--text-dim);margin:10px 0 0;line-height:1.5;}
+  footer{text-align:center;font-size:11px;color:var(--text-dim);margin-top:22px;line-height:1.6;}
+  .install-tip{display:none;background:rgba(212,175,55,.1);border:1px solid var(--gold-dim);
+    border-radius:12px;padding:10px 14px;font-size:12.5px;color:var(--gold-light);margin-bottom:14px;}
+  .karat-toggle{display:flex;gap:6px;margin-bottom:14px;position:relative;z-index:1;}
+  .karat-toggle button{flex:1;background:rgba(0,0,0,.25);border:1px solid var(--line);color:var(--text-dim);
+    border-radius:10px;padding:8px 0;font-size:13px;font-weight:700;letter-spacing:.02em;}
+  .karat-toggle button.active{background:var(--gold);color:#1a1404;border-color:var(--gold);}
+  .karat-toggle button:active{transform:scale(.97);}
+  .spinner{width:13px;height:13px;border:2px solid rgba(245,213,118,.3);border-top-color:var(--gold-light);
+    border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1><span class="dot" id="liveDot"></span>Gold Price Mauritius</h1>
+    <button id="refreshBtn" onclick="loadAll(true)">⟳ Refresh</button>
+  </header>
+  <div class="updated" id="updatedLine">Loading latest prices…</div>
+
+  <div class="install-tip" id="installTip">
+    📲 Tip: tap your browser menu → <strong>Add to Home screen</strong> to install this as an app.
+  </div>
+
+  <div class="karat-toggle" id="karatToggle">
+    <button data-karat="24" onclick="selectKarat(24)">24K</button>
+    <button data-karat="22" onclick="selectKarat(22)">22K</button>
+    <button data-karat="18" onclick="selectKarat(18)">18K</button>
+  </div>
+
+  <!-- HERO: calibrated Mauritius price -->
+  <div class="hero">
+    <div class="label">Est. Retail Price · Mauritius · <span id="heroKaratLabel">24K</span></div>
+    <div class="price">Rs <span id="heroGram">—</span><small>/ gram</small></div>
+    <div class="sub" id="hero100g">Rs — / 100g</div>
+    <div class="sub" style="margin-top:10px;">
+      <span class="badge neutral" id="biasBadge">Loading…</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="k">Spot Ref (USD/oz)</div>
+      <div class="v" id="spotUsd">—</div>
+      <div class="chg" id="spotChg">—</div>
+    </div>
+    <div class="card">
+      <div class="k">USD → MUR</div>
+      <div class="v" id="fxRate">—</div>
+      <div class="chg flat" id="fxSource">Bank of Mauritius ref</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Support &amp; Resistance <span style="opacity:.6;">(USD/oz)</span></h2>
+    <div class="levels">
+      <div class="card"><div class="k">Support</div><div class="v" id="supportLvl">—</div></div>
+      <div class="card"><div class="k">Resistance</div><div class="v" id="resistLvl">—</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Pure International Conversion <span id="pureKaratLabel" style="opacity:.6;">(24K)</span></h2>
+    <div class="grid2">
+      <div class="card">
+        <div class="k">Per Gram (USD spot × FX)</div>
+        <div class="v" id="pureGram">—</div>
+      </div>
+      <div class="card">
+        <div class="k">Per 100g (USD spot × FX)</div>
+        <div class="v" id="pure100g">—</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why This Forecast</h2>
+    <div class="notes">
+      <ul id="commentaryList">
+        <!-- COMMENTARY_START -->
+        <li><strong>Geopolitics (Iran):</strong> US and Iranian negotiators resumed talks in Doha after a stalled start; renewed Middle East uncertainty is supporting safe-haven demand for gold.</li>
+        <li><strong>Federal Reserve:</strong> Under new Chair Kevin Warsh, the Fed held rates at 3.5–3.75% in June but signaled a hawkish tilt after May CPI hit 4.2% YoY — the highest in three years. Markets pared back rate-hike bets after a weaker July 2 jobs report, which helped gold hold above $4,100.</li>
+        <li><strong>DXY &amp; 10-Year Yield:</strong> Dollar Index remains firm near recent highs and the 10-year Treasury yield sits around 4.46%, capping gold's upside even as safe-haven flows build.</li>
+        <li><strong>Brent Crude:</strong> Trading near $72–73/bbl on Iran-linked supply-risk premium, reinforcing gold's inflation-hedge appeal.</li>
+        <li><strong>Asian Markets:</strong> USD/JPY near multi-decade highs (~162), raising Bank of Japan intervention risk and the odds of spillover FX volatility.</li>
+        <!-- COMMENTARY_END -->
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Watch Today</h2>
+    <div class="notes watch" id="watchToday">
+      <!-- WATCH_START -->
+      US-Iran Doha talks progress · Fed speaker commentary on the rate path · Any surprise US economic data releases.
+      <!-- WATCH_END -->
+    </div>
+  </section>
+
+  <section>
+    <h2>Local Premium Calibration</h2>
+    <div class="settings">
+      <label>Adjust to match your jeweller's quoted price (premium over international spot)</label>
+      <input type="range" id="premiumSlider" min="-5" max="15" step="0.1" value="4.7" oninput="onPremiumChange(this.value)" />
+      <div class="row"><span>Premium applied</span><span class="val"><span id="premiumVal">4.7</span>%</span></div>
+      <p>Local retail gold in Mauritius typically trades above the raw international spot conversion due to import duty, refining and dealer margin. Default is calibrated against live Mauritius gold-gram trackers (~Rs 6,682/g). Drag the slider if your jeweller quotes differently — it's saved on this device.</p>
+    </div>
+  </section>
+
+  <footer>
+    AI-generated research · not financial advice.<br/>
+    Prices refresh live from public market data when the app is opened.<br/>
+    Commentary refreshed daily around 09:01 (Mauritius time).
+  </footer>
+
+</div>
+
+<script>
+// ---------------------------------------------------------------------
+// FALLBACK constants — used if live APIs are unreachable (offline / CORS).
+// Refreshed automatically each day by the daily-gold-forecast scheduled task.
+// ---------------------------------------------------------------------
+/* FALLBACK_START */
+const FALLBACK = {
+  spotUsd: 4137.41,
+  prevCloseUsd: 4122.55,
+  usdMur: 47.96,
+  support: 4000,
+  resistance: 4150,
+  asOf: "2026-07-03",
+  bias: "BULLISH",
+  confidence: "MEDIUM"
+};
+/* FALLBACK_END */
+
+const GRAMS_PER_OZ = 31.1035;
+const DEFAULT_PREMIUM = 4.7; // percent, calibrated vs local trackers (~Rs 6,682/g on 2026-07-03)
+// Karat purity is applied on top of the 24K-calibrated price (fineness ratio).
+// This assumes uniform premium across karats; real jeweller making-charges can vary
+// slightly by karat, but this is a reasonable default estimate.
+const KARAT_PURITY = { 24: 1, 22: 22/24, 18: 18/24 };
+
+let state = {
+  spotUsd: null, prevCloseUsd: null, usdMur: null,
+  support: FALLBACK.support, resistance: FALLBACK.resistance,
+  bias: FALLBACK.bias, confidence: FALLBACK.confidence,
+  usingFallback: false
+};
+
+function fmt(n, d=2){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmtMUR(n){ return "Rs " + Number(n).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
+
+function getPremium(){
+  const saved = localStorage.getItem("goldmu_premium");
+  return saved !== null ? parseFloat(saved) : DEFAULT_PREMIUM;
+}
+
+function onPremiumChange(v){
+  localStorage.setItem("goldmu_premium", v);
+  document.getElementById("premiumVal").textContent = Number(v).toFixed(1);
+  render();
+}
+
+function getKarat(){
+  const saved = localStorage.getItem("goldmu_karat");
+  const k = saved !== null ? parseInt(saved, 10) : 24;
+  return KARAT_PURITY[k] ? k : 24;
+}
+
+function selectKarat(k){
+  localStorage.setItem("goldmu_karat", k);
+  render();
+}
+
+async function fetchGold(){
+  const res = await fetch("https://api.gold-api.com/price/XAU", {cache:"no-store"});
+  if(!res.ok) throw new Error("gold api failed");
+  const data = await res.json();
+  const price = data.price ?? data.rate ?? data.value;
+  if(!price) throw new Error("no price field");
+  return Number(price);
+}
+
+async function fetchFx(){
+  const res = await fetch("https://open.er-api.com/v6/latest/USD", {cache:"no-store"});
+  if(!res.ok) throw new Error("fx api failed");
+  const data = await res.json();
+  const rate = data?.rates?.MUR;
+  if(!rate) throw new Error("no MUR rate");
+  return Number(rate);
+}
+
+async function loadAll(manual){
+  const dot = document.getElementById("liveDot");
+  const updatedLine = document.getElementById("updatedLine");
+  if(manual){
+    document.getElementById("refreshBtn").innerHTML = '<span class="spinner"></span> Refreshing';
+  }
+  let spot, fx;
+  try{
+    [spot, fx] = await Promise.all([fetchGold(), fetchFx()]);
+    state.spotUsd = spot;
+    state.usdMur = fx;
+    state.prevCloseUsd = FALLBACK.prevCloseUsd; // change % vs fallback prior close (best available)
+    state.usingFallback = false;
+    dot.classList.remove("stale");
+    updatedLine.textContent = "Live · updated " + new Date().toLocaleTimeString();
+  }catch(err){
+    state.spotUsd = FALLBACK.spotUsd;
+    state.usdMur = FALLBACK.usdMur;
+    state.prevCloseUsd = FALLBACK.prevCloseUsd;
+    state.usingFallback = true;
+    dot.classList.add("stale");
+    updatedLine.textContent = "Offline — showing cached values from " + FALLBACK.asOf;
+  }
+  document.getElementById("refreshBtn").innerHTML = "⟳ Refresh";
+  render();
+}
+
+function render(){
+  const premium = getPremium();
+  document.getElementById("premiumSlider").value = premium;
+  document.getElementById("premiumVal").textContent = premium.toFixed(1);
+
+  const karat = getKarat();
+  const purity = KARAT_PURITY[karat];
+  document.querySelectorAll("#karatToggle button").forEach((btn) => {
+    btn.classList.toggle("active", parseInt(btn.dataset.karat, 10) === karat);
+  });
+  document.getElementById("heroKaratLabel").textContent = karat + "K";
+  document.getElementById("pureKaratLabel").textContent = "(" + karat + "K)";
+
+  const spot = state.spotUsd, fx = state.usdMur, prev = state.prevCloseUsd;
+  const gramUsd = spot / GRAMS_PER_OZ;
+  const gramMurPure = gramUsd * fx * purity;
+  const gramMurCal = gramMurPure * (1 + premium/100);
+  const g100Pure = gramMurPure * 100;
+  const g100Cal = gramMurCal * 100;
+
+  document.getElementById("heroGram").textContent = fmt(gramMurCal, 0);
+  document.getElementById("hero100g").textContent = fmtMUR(g100Cal) + " / 100g";
+
+  document.getElementById("spotUsd").textContent = "$" + fmt(spot);
+  const chg = spot - prev;
+  const chgPct = (chg/prev)*100;
+  const chgEl = document.getElementById("spotChg");
+  chgEl.textContent = (chg>=0?"+":"") + "$" + fmt(Math.abs(chg)) + " (" + (chg>=0?"+":"") + fmt(chgPct) + "%)";
+  chgEl.className = "chg " + (chg>0?"up":chg<0?"down":"flat");
+
+  document.getElementById("fxRate").textContent = "Rs " + fmt(fx);
+
+  document.getElementById("supportLvl").textContent = "$" + fmt(state.support,0);
+  document.getElementById("resistLvl").textContent = "$" + fmt(state.resistance,0);
+
+  document.getElementById("pureGram").textContent = fmtMUR(gramMurPure) + "/g";
+  document.getElementById("pure100g").textContent = fmtMUR(g100Pure);
+
+  const badge = document.getElementById("biasBadge");
+  const biasClass = state.bias === "BULLISH" ? "bullish" : state.bias === "BEARISH" ? "bearish" : "neutral";
+  const biasIcon = state.bias === "BULLISH" ? "🟢" : state.bias === "BEARISH" ? "🔴" : "🟡";
+  badge.className = "badge " + biasClass;
+  badge.textContent = biasIcon + " " + state.bias + " · Confidence: " + state.confidence;
+}
+
+// Install tip (only show if not already installed/standalone)
+if(!window.matchMedia("(display-mode: standalone)").matches){
+  document.getElementById("installTip").style.display = "block";
+}
+
+// Register service worker for installability + offline cache
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+
+loadAll(false);
+</script>
+</body>
+</html>
