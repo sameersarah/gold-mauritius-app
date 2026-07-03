@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
 <title>Gold Price Mauritius</title>
 <meta name="theme-color" content="#0d0d0d" />
-<meta name="description" content="Live gold price forecast converted to Mauritian Rupees, calibrated to local retail rates." />
+<meta name="description" content="Live gold price forecast converted to Mauritian Rupees, automatically forecasted from multi-market forex data." />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
@@ -43,6 +43,7 @@
   .hero .price{font-size:34px;font-weight:800;color:var(--gold-light);letter-spacing:-.01em;}
   .hero .price small{font-size:16px;font-weight:600;color:var(--text-dim);margin-left:6px;}
   .hero .sub{font-size:13px;color:var(--text-dim);margin-top:6px;}
+  .hero .disclaimer{font-size:11px;color:var(--text-dim);margin-top:10px;line-height:1.5;border-top:1px solid var(--line);padding-top:10px;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;}
   .card .k{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
@@ -62,6 +63,7 @@
   .notes li{margin-bottom:9px;color:var(--text);}
   .notes li:last-child{margin-bottom:0;}
   .notes li strong{color:var(--gold-light);}
+  .notes a{color:var(--gold-light);}
   .watch{font-size:13px;color:var(--text-dim);line-height:1.55;}
   .levels{display:flex;gap:10px;}
   .levels .card{flex:1;text-align:center;}
@@ -106,13 +108,23 @@
     <button data-karat="18" onclick="selectKarat(18)">18K</button>
   </div>
 
-  <!-- HERO: calibrated Mauritius price -->
+  <!-- HERO: current calibrated Mauritius price (live spot, not a forecast) -->
   <div class="hero">
-    <div class="label">Est. Retail Price · Mauritius · <span id="heroKaratLabel">24K</span></div>
+    <div class="label">Current Price · Mauritius · <span id="heroKaratLabel">24K</span></div>
     <div class="price">Rs <span id="heroGram">—</span><small>/ gram</small></div>
     <div class="sub" id="hero100g">Rs — / 100g</div>
     <div class="sub" style="margin-top:10px;">
       <span class="badge neutral" id="biasBadge">Loading…</span>
+    </div>
+  </div>
+
+  <!-- FORECAST: automatically computed from multi-market momentum -->
+  <div class="hero" style="padding:18px 20px;">
+    <div class="label">24H Forecast · <span id="forecastKaratLabel">24K</span></div>
+    <div class="price" style="font-size:26px;">Rs <span id="forecastGram">—</span><small>/ gram</small></div>
+    <div class="sub" id="forecastDelta">—</div>
+    <div class="disclaimer">
+      This price is a forecast based on all data collected (live spot gold price and multi-market forex rates). It is automatically generated and is <strong>not a guaranteed market price.</strong>
     </div>
   </div>
 
@@ -130,7 +142,7 @@
   </div>
 
   <section>
-    <h2>Support &amp; Resistance <span style="opacity:.6;">(USD/oz)</span></h2>
+    <h2>Support &amp; Resistance <span style="opacity:.6;">(USD/oz, rolling 30-day)</span></h2>
     <div class="levels">
       <div class="card"><div class="k">Support</div><div class="v" id="supportLvl">—</div></div>
       <div class="card"><div class="k">Resistance</div><div class="v" id="resistLvl">—</div></div>
@@ -152,26 +164,23 @@
   </section>
 
   <section>
-    <h2>Why This Forecast</h2>
+    <h2>Cross-Market Signal</h2>
     <div class="notes">
       <ul id="commentaryList">
-        <!-- COMMENTARY_START -->
-        <li><strong>Geopolitics (Iran):</strong> US and Iranian negotiators resumed talks in Doha after a stalled start; renewed Middle East uncertainty is supporting safe-haven demand for gold.</li>
-        <li><strong>Federal Reserve:</strong> Under new Chair Kevin Warsh, the Fed held rates at 3.5–3.75% in June but signaled a hawkish tilt after May CPI hit 4.2% YoY — the highest in three years. Markets pared back rate-hike bets after a weaker July 2 jobs report, which helped gold hold above $4,100.</li>
-        <li><strong>DXY &amp; 10-Year Yield:</strong> Dollar Index remains firm near recent highs and the 10-year Treasury yield sits around 4.46%, capping gold's upside even as safe-haven flows build.</li>
-        <li><strong>Brent Crude:</strong> Trading near $72–73/bbl on Iran-linked supply-risk premium, reinforcing gold's inflation-hedge appeal.</li>
-        <li><strong>Asian Markets:</strong> USD/JPY near multi-decade highs (~162), raising Bank of Japan intervention risk and the odds of spillover FX volatility.</li>
-        <!-- COMMENTARY_END -->
+        <li>Loading market data…</li>
       </ul>
     </div>
   </section>
 
   <section>
-    <h2>Watch Today</h2>
-    <div class="notes watch" id="watchToday">
-      <!-- WATCH_START -->
-      US-Iran Doha talks progress · Fed speaker commentary on the rate path · Any surprise US economic data releases.
-      <!-- WATCH_END -->
+    <h2>Live Market News</h2>
+    <div class="notes watch">
+      <ul style="margin:0;padding-left:18px;">
+        <li><a href="https://www.kitco.com/news/" target="_blank" rel="noopener">Kitco — Live Gold News</a></li>
+        <li><a href="https://www.reuters.com/markets/commodities/" target="_blank" rel="noopener">Reuters — Commodities</a></li>
+        <li><a href="https://www.investing.com/currencies/usd-mur" target="_blank" rel="noopener">Investing.com — USD/MUR</a></li>
+        <li><a href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener">ForexFactory — Economic Calendar</a></li>
+      </ul>
     </div>
   </section>
 
@@ -186,19 +195,26 @@
   </section>
 
   <footer>
-    AI-generated research · not financial advice.<br/>
-    Prices refresh live from public market data when the app is opened.<br/>
-    Commentary refreshed daily around 09:01 (Mauritius time).
+    Forecast generated automatically from live spot gold data and multi-market forex rates — not financial advice.<br/>
+    This price is a forecast based on all data collected, and is not a guaranteed market rate.<br/>
+    Prices and forecast refresh live from public market data each time the app is opened.
   </footer>
 
 </div>
 
 <script>
 // ---------------------------------------------------------------------
-// FALLBACK constants — used if live APIs are unreachable (offline / CORS).
-// Refreshed automatically each day by the daily-gold-forecast scheduled task.
+// Fully automated forecast engine — no manual/daily editing required.
+// Combines the live spot gold price with a basket of major-market FX
+// rates (USD, EUR, GBP, INR, CNY) to compute momentum, bias/confidence,
+// and a forward-looking price forecast for Mauritius. History is built
+// up automatically on-device via localStorage as the app is used.
 // ---------------------------------------------------------------------
+
 /* FALLBACK_START */
+// Static bootstrap values, used only if live APIs are unreachable AND
+// this device has no saved price history yet (first-ever offline load).
+// The app no longer depends on a daily manual/AI update to function.
 const FALLBACK = {
   spotUsd: 4137.41,
   prevCloseUsd: 4122.55,
@@ -213,41 +229,55 @@ const FALLBACK = {
 
 const GRAMS_PER_OZ = 31.1035;
 const DEFAULT_PREMIUM = 4.7; // percent, calibrated vs local trackers (~Rs 6,682/g on 2026-07-03)
-// Karat purity is applied on top of the 24K-calibrated price (fineness ratio).
-// This assumes uniform premium across karats; real jeweller making-charges can vary
-// slightly by karat, but this is a reasonable default estimate.
 const KARAT_PURITY = { 24: 1, 22: 22/24, 18: 18/24 };
 
+// Major markets tracked for cross-market gold momentum (US, Eurozone, UK,
+// India, China — the largest gold-trading / gold-consuming economies).
+const MARKETS = { USD: "US Dollar", EUR: "Euro", GBP: "British Pound", INR: "Indian Rupee", CNY: "Chinese Yuan" };
+const HISTORY_KEY = "goldmu_history_v1";
+const HISTORY_MAX = 30; // rolling ~30 daily points, built up automatically over time
+
+// Frankfurter.app (ECB data, free, CORS-enabled, real historical dates) does NOT carry
+// MUR or gold, but it does give us real prior-day FX rates for these 4 currencies vs USD
+// immediately — no need to wait for local history to build up, unlike gold's own momentum.
+const FX_HISTORY_MARKETS = { EUR: "Euro", GBP: "British Pound", INR: "Indian Rupee", CNY: "Chinese Yuan" };
+
 let state = {
-  spotUsd: null, prevCloseUsd: null, usdMur: null,
+  spotUsd: null, prevCloseUsd: null, usdMur: null, rates: null,
   support: FALLBACK.support, resistance: FALLBACK.resistance,
   bias: FALLBACK.bias, confidence: FALLBACK.confidence,
+  forecastSpotUsd: null, crossMarket: null,
   usingFallback: false
 };
 
 function fmt(n, d=2){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
 function fmtMUR(n){ return "Rs " + Number(n).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
 
 function getPremium(){
   const saved = localStorage.getItem("goldmu_premium");
   return saved !== null ? parseFloat(saved) : DEFAULT_PREMIUM;
 }
-
 function onPremiumChange(v){
   localStorage.setItem("goldmu_premium", v);
   document.getElementById("premiumVal").textContent = Number(v).toFixed(1);
   render();
 }
-
 function getKarat(){
   const saved = localStorage.getItem("goldmu_karat");
   const k = saved !== null ? parseInt(saved, 10) : 24;
   return KARAT_PURITY[k] ? k : 24;
 }
-
 function selectKarat(k){
   localStorage.setItem("goldmu_karat", k);
   render();
+}
+
+function loadHistory(){
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch(e){ return []; }
+}
+function saveHistory(h){
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(-HISTORY_MAX))); } catch(e){}
 }
 
 async function fetchGold(){
@@ -259,13 +289,115 @@ async function fetchGold(){
   return Number(price);
 }
 
-async function fetchFx(){
+async function fetchFxAll(){
   const res = await fetch("https://open.er-api.com/v6/latest/USD", {cache:"no-store"});
   if(!res.ok) throw new Error("fx api failed");
   const data = await res.json();
-  const rate = data?.rates?.MUR;
-  if(!rate) throw new Error("no MUR rate");
-  return Number(rate);
+  if(!data?.rates?.MUR) throw new Error("no MUR rate");
+  return data.rates;
+}
+
+// Best-effort: real prior-business-day FX rates from Frankfurter (EUR/GBP/INR/CNY vs USD).
+// Tries back up to 5 calendar days to skip weekends/holidays with no published rate.
+// Never throws — returns null on any failure so the app still works without it.
+async function fetchFxHistory(){
+  const codes = Object.keys(FX_HISTORY_MARKETS).join(",");
+  for(let daysBack = 1; daysBack <= 5; daysBack++){
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - daysBack);
+    const dateStr = d.toISOString().slice(0,10);
+    try{
+      const res = await fetch(`https://api.frankfurter.app/${dateStr}?from=USD&to=${codes}`, {cache:"no-store"});
+      if(!res.ok) continue;
+      const data = await res.json();
+      if(data?.rates && Object.keys(data.rates).length){
+        return { date: data.date || dateStr, rates: data.rates };
+      }
+    }catch(e){ /* try an earlier date */ }
+  }
+  return null;
+}
+
+// Combine live data with saved on-device history into cross-market momentum + forecast.
+// fxHist (optional): { date, rates } from Frankfurter — real prior-day FX rates, available
+// from day one, used as an early/secondary signal before gold's own local history builds up.
+function computeCrossMarket(spotUsd, rates, fxHist){
+  const marketPrices = {};
+  Object.keys(MARKETS).forEach(c => { marketPrices[c] = rates[c] ? spotUsd * rates[c] : null; });
+
+  // FX-only momentum: is the dollar broadly strengthening/weakening against majors?
+  // This does NOT depend on gold's own price history, so it works immediately.
+  let fxMomentum = null, fxBreakdown = [];
+  if(fxHist && fxHist.rates){
+    const fxChanges = [];
+    Object.keys(FX_HISTORY_MARKETS).forEach(c => {
+      const histRate = fxHist.rates[c];
+      const nowRate = rates[c];
+      if(histRate && nowRate){
+        // rate = units of currency per 1 USD; rate falling means USD weakened vs that currency.
+        const pct = (nowRate - histRate)/histRate*100;
+        fxChanges.push(pct);
+        fxBreakdown.push({ code: c, name: FX_HISTORY_MARKETS[c], pct });
+      }
+    });
+    if(fxChanges.length){
+      fxMomentum = fxChanges.reduce((a,b)=>a+b,0)/fxChanges.length; // + = USD strengthening (gold headwind)
+    }
+  }
+
+  let history = loadHistory();
+  const today = todayStr();
+  const existingIdx = history.findIndex(h => h.date === today);
+  if(existingIdx >= 0){
+    history[existingIdx] = { date: today, spotUsd, marketPrices };
+  } else {
+    history.push({ date: today, spotUsd, marketPrices });
+  }
+  saveHistory(history);
+  history = loadHistory();
+
+  // most recent distinct prior day, for momentum comparison
+  const prevEntry = [...history].reverse().find(h => h.date !== today) || null;
+
+  let momentum = null, agreement = null, bias = FALLBACK.bias, confidence = FALLBACK.confidence, breakdown = [];
+  if(prevEntry){
+    const changes = [];
+    Object.keys(MARKETS).forEach(c => {
+      const p0 = prevEntry.marketPrices?.[c];
+      const p1 = marketPrices[c];
+      if(p0 && p1){
+        const pct = (p1 - p0)/p0*100;
+        changes.push(pct);
+        breakdown.push({ code: c, name: MARKETS[c], pct });
+      }
+    });
+    if(changes.length){
+      momentum = changes.reduce((a,b)=>a+b,0)/changes.length;
+      const positives = changes.filter(c=>c>0.02).length;
+      const negatives = changes.filter(c=>c<-0.02).length;
+      agreement = Math.max(positives, negatives) / changes.length;
+      bias = momentum > 0.1 ? "BULLISH" : momentum < -0.1 ? "BEARISH" : "NEUTRAL";
+      confidence = agreement >= 0.75 ? "HIGH" : agreement >= 0.5 ? "MEDIUM" : "LOW";
+    }
+  } else if(fxMomentum !== null){
+    // Gold's own local history hasn't built up yet (needs a 2nd calendar day of visits).
+    // Use the FX basket as an early, lower-confidence proxy: a broadly weakening dollar
+    // is typically gold-supportive, and vice versa — inverse relationship.
+    bias = fxMomentum < -0.05 ? "BULLISH" : fxMomentum > 0.05 ? "BEARISH" : "NEUTRAL";
+    confidence = "LOW"; // proxy signal only, not gold's own momentum
+    momentum = -fxMomentum; // express on the same "positive = bullish for gold" scale as above
+  }
+
+  // Rolling support/resistance from saved daily closes, bootstrapped with FALLBACK levels.
+  const spots = history.map(h => h.spotUsd).concat([FALLBACK.support, FALLBACK.resistance]);
+  const support = Math.min(...spots);
+  const resistance = Math.max(...spots);
+
+  // Forecast: dampened projection of momentum onto current spot (capped to +/-2%).
+  const dampened = momentum !== null ? Math.max(-2, Math.min(2, momentum * 0.5)) : 0;
+  const forecastSpotUsd = spotUsd * (1 + dampened/100);
+
+  return { marketPrices, momentum, agreement, bias, confidence, breakdown, support, resistance, forecastSpotUsd, prevEntry, fxMomentum, fxBreakdown, fxDate: fxHist ? fxHist.date : null };
 }
 
 async function loadAll(manual){
@@ -274,12 +406,20 @@ async function loadAll(manual){
   if(manual){
     document.getElementById("refreshBtn").innerHTML = '<span class="spinner"></span> Refreshing';
   }
-  let spot, fx;
   try{
-    [spot, fx] = await Promise.all([fetchGold(), fetchFx()]);
+    // fxHist is best-effort and never throws, so it can't break the main price load.
+    const [spot, rates, fxHist] = await Promise.all([fetchGold(), fetchFxAll(), fetchFxHistory()]);
     state.spotUsd = spot;
-    state.usdMur = fx;
-    state.prevCloseUsd = FALLBACK.prevCloseUsd; // change % vs fallback prior close (best available)
+    state.usdMur = rates.MUR;
+    state.rates = rates;
+    const cm = computeCrossMarket(spot, rates, fxHist);
+    state.prevCloseUsd = cm.prevEntry ? cm.prevEntry.spotUsd : FALLBACK.prevCloseUsd;
+    state.support = cm.support;
+    state.resistance = cm.resistance;
+    state.bias = cm.bias;
+    state.confidence = cm.confidence;
+    state.forecastSpotUsd = cm.forecastSpotUsd;
+    state.crossMarket = cm;
     state.usingFallback = false;
     dot.classList.remove("stale");
     updatedLine.textContent = "Live · updated " + new Date().toLocaleTimeString();
@@ -287,12 +427,19 @@ async function loadAll(manual){
     state.spotUsd = FALLBACK.spotUsd;
     state.usdMur = FALLBACK.usdMur;
     state.prevCloseUsd = FALLBACK.prevCloseUsd;
+    state.support = FALLBACK.support;
+    state.resistance = FALLBACK.resistance;
+    state.bias = FALLBACK.bias;
+    state.confidence = FALLBACK.confidence;
+    state.forecastSpotUsd = FALLBACK.spotUsd;
+    state.crossMarket = null;
     state.usingFallback = true;
     dot.classList.add("stale");
     updatedLine.textContent = "Offline — showing cached values from " + FALLBACK.asOf;
   }
   document.getElementById("refreshBtn").innerHTML = "⟳ Refresh";
   render();
+  renderCommentary();
 }
 
 function render(){
@@ -307,6 +454,7 @@ function render(){
   });
   document.getElementById("heroKaratLabel").textContent = karat + "K";
   document.getElementById("pureKaratLabel").textContent = "(" + karat + "K)";
+  document.getElementById("forecastKaratLabel").textContent = karat + "K";
 
   const spot = state.spotUsd, fx = state.usdMur, prev = state.prevCloseUsd;
   const gramUsd = spot / GRAMS_PER_OZ;
@@ -338,6 +486,49 @@ function render(){
   const biasIcon = state.bias === "BULLISH" ? "🟢" : state.bias === "BEARISH" ? "🔴" : "🟡";
   badge.className = "badge " + biasClass;
   badge.textContent = biasIcon + " " + state.bias + " · Confidence: " + state.confidence;
+
+  // 24H forecast card — separate from the "current" hero price above.
+  const forecastSpot = state.forecastSpotUsd ?? spot;
+  const forecastGramUsd = forecastSpot / GRAMS_PER_OZ;
+  const forecastGramMur = forecastGramUsd * fx * purity * (1 + premium/100);
+  document.getElementById("forecastGram").textContent = fmt(forecastGramMur, 0);
+  const deltaPct = ((forecastGramMur - gramMurCal)/gramMurCal)*100;
+  const deltaEl = document.getElementById("forecastDelta");
+  let basisLabel = "cached baseline (building history)";
+  if(state.crossMarket && state.crossMarket.breakdown && state.crossMarket.breakdown.length){
+    basisLabel = Object.keys(MARKETS).length + "-market momentum";
+  } else if(state.crossMarket && state.crossMarket.fxBreakdown && state.crossMarket.fxBreakdown.length){
+    basisLabel = "FX-basket proxy (gold history building)";
+  }
+  deltaEl.textContent = "Δ vs current: " + (deltaPct>=0?"+":"") + fmt(deltaPct) + "% · Based on " + basisLabel;
+}
+
+function renderCommentary(){
+  const list = document.getElementById("commentaryList");
+  const cm = state.crossMarket;
+  let html = "";
+
+  if(cm && cm.breakdown && cm.breakdown.length){
+    cm.breakdown.forEach(b => {
+      const arrow = b.pct > 0 ? "▲" : b.pct < 0 ? "▼" : "→";
+      const cls = b.pct > 0 ? "up" : b.pct < 0 ? "down" : "flat";
+      html += '<li><strong>' + b.name + ' (' + b.code + '):</strong> Gold <span class="' + cls + '">' + arrow + ' ' + (b.pct>=0?"+":"") + fmt(b.pct) + '%</span> vs last recorded close.</li>';
+    });
+    const totalMarkets = Object.keys(MARKETS).length;
+    const agreementCount = cm.agreement !== null ? Math.round(cm.agreement * totalMarkets) : null;
+    html += '<li><strong>Cross-market agreement:</strong> ' + (agreementCount !== null ? agreementCount + '/' + totalMarkets : '—') + ' tracked markets moving the same direction → confidence: ' + state.confidence + '.</li>';
+  } else if(cm && cm.fxBreakdown && cm.fxBreakdown.length){
+    html += '<li>Gold\'s own price history is still building on this device (needs a 2nd calendar day of visits) — using a dollar-strength proxy signal from real FX data in the meantime:</li>';
+    cm.fxBreakdown.forEach(b => {
+      const arrow = b.pct > 0 ? "▲" : b.pct < 0 ? "▼" : "→";
+      const cls = b.pct > 0 ? "down" : b.pct < 0 ? "up" : "flat"; // USD strengthening vs that currency = gold headwind
+      html += '<li><strong>USD vs ' + b.name + ' (' + b.code + '):</strong> <span class="' + cls + '">' + arrow + ' ' + (b.pct>=0?"+":"") + fmt(b.pct) + '%</span> since ' + (cm.fxDate || "last available date") + '.</li>';
+    });
+    html += '<li><strong>Proxy bias:</strong> ' + state.bias + ' · Confidence: LOW (FX-only signal, not gold\'s own momentum yet).</li>';
+  } else {
+    html = '<li>Gathering market data — check back shortly, or after this app has been opened on two different days for a full momentum-based forecast.</li>';
+  }
+  list.innerHTML = html;
 }
 
 // Install tip (only show if not already installed/standalone)
