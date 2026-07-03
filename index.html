@@ -237,7 +237,7 @@ const MARKETS = { USD: "US Dollar", EUR: "Euro", GBP: "British Pound", INR: "Ind
 const HISTORY_KEY = "goldmu_history_v1";
 const HISTORY_MAX = 30; // rolling ~30 daily points, built up automatically over time
 
-// Frankfurter.app (ECB data, free, CORS-enabled, real historical dates) does NOT carry
+// Frankfurter (api.frankfurter.dev) (ECB data, free, CORS-enabled, real historical dates) does NOT carry
 // MUR or gold, but it does give us real prior-day FX rates for these 4 currencies vs USD
 // immediately — no need to wait for local history to build up, unlike gold's own momentum.
 const FX_HISTORY_MARKETS = { EUR: "Euro", GBP: "British Pound", INR: "Indian Rupee", CNY: "Chinese Yuan" };
@@ -307,7 +307,7 @@ async function fetchFxHistory(){
     d.setUTCDate(d.getUTCDate() - daysBack);
     const dateStr = d.toISOString().slice(0,10);
     try{
-      const res = await fetch(`https://api.frankfurter.app/${dateStr}?from=USD&to=${codes}`, {cache:"no-store"});
+      const res = await fetch(`https://api.frankfurter.dev/v1/${dateStr}?from=USD&to=${codes}`, {cache:"no-store"});
       if(!res.ok) continue;
       const data = await res.json();
       if(data?.rates && Object.keys(data.rates).length){
